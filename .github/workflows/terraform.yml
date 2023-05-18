@@ -1,4 +1,4 @@
-name: Terraform
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,12 +6,19 @@ on:
       - main
 
 jobs:
-  terraform:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: your-docker-repo/image-name:latest
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
@@ -20,12 +27,8 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        id: plan
-        run: terraform plan -out=tfplan -input=false
+        run: terraform plan
 
       - name: Terraform Apply
-        id: apply
-        run: terraform apply tfplan -auto-approve
+        run: terraform apply -auto-approve
 
-      - name: Get Instance IP
-        run: echo "Instance IP: ${{ steps.apply.outputs.instance_public_ip }}"
