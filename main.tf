@@ -7,10 +7,10 @@ provider "aws" {
 resource "aws_instance" "webapp_instance" {
   ami           = "ami-007855ac798b5175e"
   instance_type = "t2.micro"
+  key_name      = "keypair4-5lab"
+  security_groups = ["sg-0bd87eaba6ad91c09"]
 
-  tags = {
-    Name = "WebAppInstance"
-  }
+}
 
   security_groups = [aws_security_group.webapp_security_group.id]
 }
