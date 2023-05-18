@@ -4,23 +4,29 @@ provider "aws" {
   region     = "us-east-1"
 }
 
-resource "aws_instance" "lab6" {
-  ami           = "ami-007855ac798b5175e" 
+resource "aws_instance" "webapp_instance" {
+  ami           = "ami-007855ac798b5175e"
   instance_type = "t2.micro"
 
   tags = {
-    Name = "lab6-instance"
+    Name = "WebAppInstance"
   }
+
+  security_groups = [aws_security_group.webapp_security_group.id]
 }
 
-resource "aws_security_group" "security_group_lab6" {
-  name        = "security_group_lab6"
-  description = "security group for lab6"
-
+resource "aws_security_group" "webapp_security_group" {
+  name        = "WebAppSecurityGroup"
+  description = "Security group for the web application"
+  
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+output "instance_public_ip" {
+  value = aws_instance.webapp_instance.public_ip
 }
