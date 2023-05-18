@@ -1,10 +1,13 @@
-name: Docker Build
+name: CI/CD Pipeline
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
 jobs:
-  build:
-    name: Build and push Docker image
+  docker_build:
+    name: Docker Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,3 +23,25 @@ jobs:
           context: .
           push: true
           tags: cyberberry/web-app:latest
+
+  terraform:
+    name: Terraform Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.4.6
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
