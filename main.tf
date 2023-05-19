@@ -17,6 +17,10 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_security_group" "lab6" {
   name        = "lab6"
   description = "Allow HTTP and SSH traffic via Terraform"
