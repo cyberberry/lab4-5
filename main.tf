@@ -1,32 +1,55 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.16"
+    }
+  }
+
+  required_version = ">= 1.2.0"
+}
+
 provider "aws" {
-  access_key = "AKIATNRQVWD6ALMTCHVO"
-  secret_key = "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"
+  access_key = "AKIATNRQVWD6G2XDANWI"
+  secret_key = "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"
   region     = "us-east-1"
 }
 
-resource "aws_instance" "webapp_instance" {
-  ami           = "ami-007855ac798b5175e"
-  instance_type = "t2.micro"
-  key_name      = "keypair4-5lab"
-  security_groups = ["sg-0bd87eaba6ad91c09"]
 
-}
+resource "aws_security_group" "lab6" {
+  name        = "lab6"
+  description = "Allow HTTP and SSH traffic via Terraform"
 
-  security_groups = [aws_security_group.webapp_security_group.id]
-}
-
-resource "aws_security_group" "webapp_security_group" {
-  name        = "WebAppSecurityGroup"
-  description = "Security group for the web application"
-  
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-output "instance_public_ip" {
-  value = aws_instance.webapp_instance.public_ip
+resource "aws_instance" "app_server" {
+  ami                         = "ami-007855ac798b5175e"
+  instance_type               = "t2.micro"
+  key_name                    = "keypair4-5lab"
+  vpc_security_group_ids      = [aws_security_group.lab6.id]
+  associate_public_ip_address = true
+  user_data                   = file("userdata.sh")
+  tags = {
+    Name = "Lab6"
+  }
 }
