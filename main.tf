@@ -2,13 +2,20 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "3.74.0"
     }
   }
 
   required_version = ">= 1.2.0"
-}
 
+  cloud {
+    organization = "cyberberry-lab6"
+
+    workspaces {
+      name = "cyberberry-lab6"
+    }
+  }
+}
 
 resource "aws_security_group" "lab6" {
   name        = "lab6"
