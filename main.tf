@@ -9,12 +9,6 @@ terraform {
   required_version = ">= 1.2.0"
 }
 
-provider "aws" {
-  access_key = "AKIATNRQVWD6G2XDANWI"
-  secret_key = "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"
-  region     = "us-east-1"
-}
-
 
 resource "aws_security_group" "lab6" {
   name        = "lab6"
